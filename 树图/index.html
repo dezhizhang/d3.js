@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/d3/3.5.6/d3.js"></script>
+</head>
+<body>
+    <script>
+      let width = 500;
+      let height = 500;
+      let svg = d3.select('body')
+                  .append('svg')
+                  .attr('width',width)
+                  .attr('height',height)
+
+      let tree = d3.layout.tree()
+                  .size([width,height-200])
+                  .separation(function(a,b){
+                      return (a.parent == b.parent ? 1 : 2)
+                  })
+
+     d3.json('./data.json',function(error,root){
+         let nodes = tree.nodes(root);
+         let links = tree.links(nodes);
+
+        let diagonal = d3.svg.diagonal()
+                          .projection(function(d){
+                              return [d.y,d.x];     //创建对角线生成器
+
+                          })
+
+        let gTree = svg.append('g')
+    
+        let link = gTree.selectAll('.link')
+                          .data(links)
+                          .enter()
+                          .append('path')
+                          .attr('class','link')
+                          .attr('d',diagonal)       //使用对角线生成器
+                          .attr('stroke','#000')
+                          .attr('fill','none')
+
+
+        let colors = d3.scale.category20();
+
+        let node = gTree.selectAll('.node')
+                        .data(nodes)
+                        .enter()
+                        .append('g')
+                        .attr('class','node')
+                        .attr('transform',function(d){
+                             return 'translate('+d.y+','+d.x+')';
+
+                        })
+        let Treecircle = node.append('circle')
+                        .attr('r',6)
+                        .attr('fill',function(d,i){
+                            return colors(i);
+
+            })
+
+        let Treetext = node.append('text')
+                          .attr('dx',function(d){
+                              return d.children ? -8 : 8;
+                          })
+                          .attr('dy',3)
+                          .style('text-achor',function(d){
+                              return d.children ? 'end': 'start'
+                          })
+                          .text(function(d){
+                              return d.name
+                          })
+                       
+
+
+
+     })
+
+     
+
+
+
+
+
+    </script>
+</body>
+</html>

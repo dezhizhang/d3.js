@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/d3/3.5.6/d3.js"></script>
+</head>
+<body>
+    <script>
+       let continent = ['北京','上海','广州','杭州','贵州'];
+       let population = [
+           [8000,7000,6000,9000,4000],
+           [3000,4000,5000,6000,4000],
+           [2000,8000,9000,400,1000],
+           [7000,6000,4000,8000,2000],
+           [6000,5000,4000,2000,9000]
+
+       ];
+       
+       let chord = d3.layout.chord()
+                             .padding(0.06)
+                             .sortSubgroups(d3.ascending)
+                             .matrix(population)
+
+        let width = 500;
+        let height = 500;
+        let svg = d3.select('body')
+                    .append('svg')
+                    .attr('width',width)
+                    .attr('height',height)
+
+
+
+        let gChord = svg.append('g')                    //弦图g元素并移动画布中心位置
+                    .attr('transform','translate('+width/2+','+height/2+')');
+
+
+        let gOuter = gChord.append('g')               //节点的g元素
+
+        let gInner = gChord.append('g')              //弦的g元素
+
+
+        let colors = d3.scale.category20();         //颜色比列尺
+
+        let innerRadius = width / 2 * 0.6;         //孤的内半径
+        let outerRadius = innerRadius * 1.1;       //孤的个半径
+
+
+        let arcOuter = d3.svg.arc()                 //孤生成器
+                       .innerRadius(innerRadius)
+                       .outerRadius(outerRadius)
+
+
+
+
+        gOuter.selectAll('.outerPath')
+                      .data(chord.groups)
+                      .enter()
+                      .append('path')
+                      .attr('class','outerPath')
+                      .attr('fill',function(d,i){ return colors(i)})
+                      .attr('d',arcOuter)    //使用孤生成器
+
+
+
+        gOuter.selectAll('.outerText')
+                      .data(chord.groups)
+                      .enter()
+                      .append('text')
+                      .each(function(d,i){
+                          d.angle = (d.startAngle + d.endAngle) / 2;  //孤的中心角度
+                          d.name = continent[i]
+                      })
+                      .attr('class','outerText')
+                      .attr('dy','0.35em')
+                      .attr('transform',function(d){
+                          let result = 'rotate('+d.angle * 180 / Math.PI+')';
+                          result += 'translate('+0+','+ -1.0 * (outerRadius + 10)+')'
+                          if(d.angle > Math.PI * 3 / 4 && d.angle <Math.PI * 5 / 4){
+                              result += 'rotate('+180+')' 
+                          } 
+                          return result;
+
+
+                      })
+                      .text(function(d){
+                          return d.name;
+
+                      })
+
+
+
+                  let arcInner = d3.svg.chord()         //弦生成器计算弦
+                                       .radius(innerRadius)
+
+                 gInner.selectAll('.innerPath')
+                       .data(chord.chords)
+                       .enter()
+                       .append('path')
+                       .attr('class','innerPath')
+                       .attr('d',arcInner)
+                       .attr('fill',function(d,i){
+                           return colors(i)
+                       })
+
+
+                gOuter.selectAll('.outerPath')
+                      .on('mouseover',fade(0.0))
+                      .on('mouseout',fade(1.0))
+
+
+                function fade(opacity){
+                    return function(g,i){
+                       gInner.selectAll('.innerPath')
+                             .filter(function(d){
+                                 return d.source.index !=i && d.target.index !=i;
+                             })
+                             .transition()
+                             .style('opacity',opacity)
+
+                    }
+                }
+    </script>
+</body>
+</html>

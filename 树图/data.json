@@ -1,0 +1,28 @@
+{
+    "name":"中国",
+    "children":[
+        {
+            "name":"贵州",
+            "children":[
+                {"name":"六盘水"},
+                {"name":"毕节"},
+                {"name":"都匀"}
+               
+            ]
+        },
+        {
+           "name":"广州",
+           "children":[
+               {
+                   "name":"广东",
+                   "chilren":[
+                       {"name":"天河区"},
+                       {"name":"越秀区"},
+                       {"name":"中山区"}
+                    ]
+               }
+           ]
+
+        }
+    ]
+}
