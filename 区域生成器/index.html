@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/d3/3.5.6/d3.js"></script>
+</head>
+<body>
+        <svg width="500" height="500" xmlns="http://www.w3.org/2000/svg" version="1.1">
+            <path d="M100 100 L150 50 L300 20 L310 60L480 100Z" stroke="red" stroke-wdith='2px' fill="pink"/>
+        </svg>
+          
+
+    <!-- <script>
+      let width = 500;
+      let height = 500;
+      
+      let svg = d3.select('body')
+                  .append('svg')
+                  .attr('width',width)
+                  .attr('height',height)
+
+     let dataset = [80,120,130,70,60,90];
+
+     let areaPath = d3.svg.area()
+                          .x(function(d,i){ return 50 + i * 80;})
+                          .y(function(d,i){ return height / 2;})
+                          .y1(function(d,i){ return height / 2 -d })
+
+    let areas = svg.append('path')
+                   .attr('d',areaPath(dataset))
+                   .attr('stroke','red')
+                   .attr('stroke-width','3px')
+                   .attr('fill','pink')
+
+    </script> -->
+</body>
+</html>
