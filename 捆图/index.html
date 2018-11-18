@@ -8,26 +8,139 @@
     <script src="https://cdn.bootcss.com/d3/3.5.6/d3.js"></script>
 </head>
 <body>
-    <script>
-       let width = 500;
-       let height = 500;
+   <script>
+     let width = 500;
+     let height = 500;
 
-       let svg = d3.select('body')
-                   .attr('width',width)
-                   .attr('height',height)
+     let svg = d3.select('body')
+                 .append('svg')
+                 .attr('width',width)
+                 .attr('height',height)
 
-
-        let cities = {
+    let cities = {
             name:'',
             children:[
-                {name:'北京'},
-                {name:'上海'},
-                {name:'杭州'},
-                {name:'广州'},
-                {name:桂}
+                {name:"北京"},{name:'上海'},{name:'杭州'},
+                {name:'广州'},{name:'桂林'},{name:'昆明'},
+                {name:'成都'},{name:'西安'},{name:'太原'}
             ]
-        }
+    }
 
-    </script>
+    let railway = [
+        { source:'北京',target:'上海'},
+        { source:'广州',target:'北京'},
+        { source:'北京',target:'昆明'},
+        { source:'北京',target:'太原'},
+        { source:'北京',target:'成都'},
+        { source:'北京',target:'西安'},
+        { source:'北京',target:'桂林'},
+        { source:'北京',target:'上海'},
+        { source:'上海',target:'广州'},
+        { source:'上海',target:'桂林'},
+        { source:'上海',target:'西安'},
+        { source:'成都',target:'北京'},
+        { source:'成都',target:'广州'},
+        { source:'成都',target:'桂林'},
+        { source:'成都',target:'昆明'},
+        { source:'成都',target:'杭州'}
+    ]
+
+    let cluster = d3.layout.cluster()       //集群图布局
+                     .size([360,width / 2 - 50])
+                     .separation(function(a,b){
+                         return (a.parenet == b.parenet ? 1 : 2) / a.depth;
+
+
+                     });
+
+   
+
+    let nodes = cluster.nodes(cities);
+
+    let bundle = d3.layout.bundle();         //打包图布局
+   
+     //转换数据
+    function map(nodes,links){
+        let hash = [];
+        for(let i = 0; i<nodes.length;i++){
+            hash[nodes[i].name] = nodes[i];
+
+        }
+        let resultLinks = [];
+        for(let i = 0;i<links.length;i++){
+            resultLinks.push({
+                source:hash[links[i].source],
+                target:hash[links[i].target]
+            })
+        }
+        return resultLinks;
+
+    }
+
+    let oLinks = map(nodes,railway);
+    let link = bundle(oLinks);
+
+    let line = d3.svg.line.radial()
+                  .interpolate('bundle')
+                  .tension(.85)
+                  .radius(function(d){ return d.y;})
+                  .angle(function(d){ return d.x / 180 * Math.PI;})
+
+
+    let gBundle = svg.append('g')
+                  .attr('transform','translate('+width / 2+','+height/2+')');
+
+    let colors = d3.scale.category20();
+
+    let gLink = gBundle.selectAll('.link')
+                      .data(link)
+                      .enter()
+                      .append('path')
+                      .attr('class','link')
+                      .attr('d',line)
+                      .attr('fill','none')
+                      .attr('stroke-width','8px')
+                      .attr('stroke',function(d,i){
+                          return colors(i);
+
+                      })
+
+    let node = gBundle.selectAll('.node')
+                      .data(nodes.filter(function(d){ return !d.children}))
+                      .enter()
+                      .append('g')
+                      .attr('class','node')
+                      .attr('transform',function(d){
+                          return 'rotate('+(d.x-90)+')translate('+d.y+')'+'rotate('+(d.x-90)+')'
+                      })
+
+
+    node.append('circle')
+        .attr('r',20)
+        .attr('fill',function(d,i){ return colors(i)})
+
+    node.append('text')
+        .attr('dy','.2em')
+        .style('text-anchor','middle')
+        .text(function(d){ return d.name;})
+                      
+
+     
+                     
+            
+
+                
+
+
+
+
+
+   
+
+
+
+
+        
+   </script>
 </body>
 </html>
