@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/d3/3.5.6/d3.js"></script>
+</head>
+<body>
+    <script>
+      let width = 1200;
+      let height = 600;
+
+      let svg = d3.select('body')
+                  .append('svg')
+                  .attr('width',width)
+                  .attr('height',height)
+
+
+
+     let treemap = d3.layout.treemap()
+                  .size([width,height])
+                  .value(function(d){ return d.gdp;})
+
+
+    let colors = d3.scale.category20()
+    d3.json('./data.json',(error,root) => {
+        let nodes = treemap.nodes(root)
+        let links = treemap.links(nodes);
+
+        let groups = svg.selectAll('g')
+                    .data(nodes.filter(function(d){ return !d.children;}))
+                    .enter()
+                    .append('g')
+
+        
+        let rects = groups.append('rect')
+                    .attr('class','nodeRect')
+                    .attr('x',function(d){ return d.x;})
+                    .attr('y',function(d){ return d.y;})
+                    .attr('fill',function(d,i){ return colors(i)}) 
+                    .attr('width',function(d){ return d.dx;})
+                    .attr('height',function(d){ return d.dy;})
+
+        let texts = groups.append('text')
+                    .attr('class','nodeName')
+                    .attr('x',function(d){ return d.x;})
+                    .attr('y',function(d){ return d.y;})
+                    .attr('dx','0.5em')
+                    .attr('dy','1.5em')
+                    .text(function(d){
+                        return d.name + '' + d.gdp;
+
+                    })
+
+
+    })
+
+                
+    </script>
+</body>
+</html>
