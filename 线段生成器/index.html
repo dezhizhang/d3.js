@@ -8,8 +8,28 @@
     <script src="https://cdn.bootcss.com/d3/3.5.6/d3.js"></script>
 </head>
 <body>
-    <svg>
-        <path d="M 20 20L 200 20"  stroke="red" stroke-width="4px"></path>
-    </svg>
+   <script>
+      let width = 500;
+      let height = 500;
+
+      let svg = d3.select('body')
+                  .append('svg')
+                  .attr('width',width)
+                  .attr('height',height)
+
+     let dataset = [20,20,100,100,200,200,200,300,300,300]
+
+     let linePath = d3.svg.line()       //创建线段生成器
+                      .x(function(d,i){ return d })
+                      .y(function(d,i){ return i%2==0 ? 60 : 180})
+                      .interpolate('step')
+
+     let lines = svg.append('path')
+                    .attr('d',linePath(dataset))
+                    .attr('stroke','red')
+                    .attr('stroke-width','3px')
+                    .attr('fill','none')
+
+    </script>
 </body>
 </html>
