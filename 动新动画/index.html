@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/d3/3.3.3/d3.js"></script>
+</head>
+<body>
+    <script>
+   
+    let width = 960;
+    let height = 500;
+
+    let x = d3.scale.ordinal()   //定义系数比例尺
+                .domain([0,1,2])
+                .rangePoints([0,width],1)
+
+
+
+    let svg = d3.select('body').append('svg')
+                .attr('width',width)
+                .attr('height',height)   //绘制画布
+
+
+
+
+    let circle = svg.selectAll('circle')
+                .data([0,1])
+                .enter()
+                .append('circle')
+                .attr('r',80)
+                .attr('cx',x)
+                .attr('cy',height / 2)
+                .attr('fill','red')
+
+
+    setTimeout(function(){
+
+        let updataCircle = circle.data([1,2],function(d){ return d;})
+
+        let enterCircle = updataCircle.enter()
+
+        let exitCircle = updataCircle.exit()
+
+            updataCircle
+                        .transition()
+                        .duration(750)
+                        .attr('r',height / 3)
+                        .attr('fill','orage')
+
+
+            enterCircle
+                      .append('circle')
+                      .attr('r',height / 4)
+                      .attr('cx',x)
+                      .attr('cy',height / 2)
+                      .attr('fill','pink')
+
+
+            exitCircle
+                     .transition()
+                     .duration(750)
+                     .attr('fill','red')
+                     .attr('r','1e-6')
+                     .attr('fill','red')
+                     .remove()
+
+             
+
+    },1000)
+
+</script>
+
+</body>
+</html>

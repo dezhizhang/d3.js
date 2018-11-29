@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/d3/3.5.6/d3.js"></script>
+</head>
+<body>
+  
+    <script>
+
+        let π = Math.PI;     
+        let t = 2 *  π ;   //整个圆周
+        let n = 500;       //系数
+
+        let width = 900;
+        let height = 960;
+        let outerRadius = width / 2 - 20;   //孤的外半径
+        let innerRadius = outerRadius -80;  //孤的内半径
+        let dataset = d3.range(0,  t,  t / n)  //提定范围的随机数 
+
+        let svg = d3.select('body').append('svg')   //绘制画布
+                    .attr('width',width)
+                    .attr('height',height);
+
+        let group = svg.append("g")
+                .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+                .selectAll("path")
+                .data(d3.range(0, t, t / n))
+                .enter().append("path")
+                .attr("d", d3.svg.arc()
+                    .outerRadius(outerRadius)
+                    .innerRadius(innerRadius)
+                    .startAngle(function(d) { return d; })
+                    .endAngle(function(d) { return d + t / n * 1.1; }))
+                    .style("fill", function(d) { return d3.hsl(d * 360 / t, 1, .5); });
+
+            d3.select(self.frameElement).style("height", height + "px");
+
+                  
+
+                            
+                   
+    </script> 
+</body>
+</html>
+
+
+
+
+
+svg.append('svg').append('g')
+     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+  .selectAll("path")
+    .data(dataset)
+  .enter().append("path")
+    
+
+    
