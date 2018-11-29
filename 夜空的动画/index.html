@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/d3/4.0.0-alpha.50/d3.js"></script>
+    <style>
+    body {
+        background: #000;
+        }      
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="1000" height="500"></canvas>
+    <script>
+
+        let canvas = document.getElementById('canvas'); //获了canvass
+        let context = canvas.getContext('2d');         //设置2d绘图空间
+        let width = window.innerWidth;                 //设置画布的宽度
+        let height = window.innerHeight;               //设置画布的高度
+
+        let n = 400;
+        let pi = Math.PI;
+        let tau = 2 * pi;
+
+
+        //设置节点的数据
+        let nodes = d3.range(n).map(function(){
+            let r = Math.random() * width / 3;  //半径
+            let a = Math.random() * tau;        //孤度
+            let x = width / 2 + r * Math.cos(a);  //x坐标
+            let y = height / 2 + r * Math.sin(a)  //y坐标
+
+            return {
+                x:x,
+                y:y,
+                vx:(height / 2 - y)  * 0.006,   //x方向上的速度
+                vy:(x-width / 2)  * 0.006       //y方向上的速度
+            }
+        })
+
+                
+        let force = d3.forceSimulation(nodes)    //设置力导向力
+                      .drag(0)                   
+                      .alphaDecay(0)
+                      .force('change',d3.forceManyBody().strength(0.02))
+                      .on('tick',ticked)
+
+    
+        let stroke = d3.scaleLinear()      //线性比例尺
+                       .domain([0,10])   //设置线性比例尺的定义域
+                       .range(['magenta','yellow'])   //设置线性比例尺的值域
+                       
+
+         
+        function ticked() {
+            context.clearRect(0,0,width,height)     //绘制前清除画布
+            context.lineWidth = 4;                  //设置线的空度
+            context.lineCap = 'square'              //设置线条末端线帽的样式。
+            for(let i=0, node,vx,vy;i < n; ++i){
+                node = nodes[i];
+                context.beginPath();               //开始绘制
+                context.moveTo(node.x, node.y);    //开始绘制的起点
+                context.lineTo(node.x + node.vx * 3, node.y + node.vy * 3); //绘制的结束点
+                context.strokeStyle = stroke(node.vx * node.vx + node.vy * node.vy);  //描边样式
+                context.stroke();
+            }
+        }
+                
+        </script>
+</body>
+</html>
+
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+

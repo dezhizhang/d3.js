@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/d3/3.3.3/d3.js"></script>
+</head>
+<body>
+    <script>
+
+        let width = 960;
+        let height = 500;
+        let radius = Math.min(width,height) / 2 -10    //孤半径
+
+        let data = d3.range(10).map(Math.random).sort(d3.descending);
+
+
+        let color = d3.scale.category20();  //颜色生成器
+
+        let arc = d3.svg.arc()              //孤生成器
+                    .outerRadius(radius)
+
+        let pie = d3.layout.pie()
+                                            //饼图生成器
+
+        let svg = d3.select('body').append('svg')
+                    .datum(data)
+                    .attr('width',width)
+                    .attr('height',height)
+                    .append('g')            //绘制画布并添加一个g元素将绘制点移动画布的中心点
+                    .attr('transform','translate('+width / 2+','+height / 2+')')
+       
+        let arcs = svg.selectAll('.arc')
+                    .data(pie)
+                    .enter()
+                    .append('g')
+                    .attr('class','arc')
+
+        arcs.append('path')
+                    .attr('fill',function(d,i){ return color(i)})
+                    .transition()
+                    .ease('bounce')   //动画形式
+                    .duration(200)    //持续时间
+                    .attrTween('d',tweenPie)  //改变动画的路径
+                    .transition()
+                    .ease('elastic')
+                    .delay(function(d,i){ return 2000 + i * 50;})  //过i * 50 +2000后执行另一个动画
+                    .duration(750)
+                    .attrTween('d',tweenDonut);
+
+        
+
+        function tweenPie(b){
+             b.innerRadius = 0;   //b是从路径那接收过来的参数
+             let i = d3.interpolate({startAngle:0,endAngle:0},b); //插值生成器
+             return function(t){ return arc(i(t))}   //这是一个高阶函数
+        }
+
+
+        function tweenDonut(b){
+           b.innerRadius = radius * 0.6;
+           let i = d3.interpolate({innerRadius:0},b);  //插值生成器
+           return function(t){ return arc(i(t))};
+
+        }
+    </script>
+   
+</body>
+</html>
