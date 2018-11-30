@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/d3/3.5.6/d3.js"></script>
+    <style>
+      path { fill: pink; stroke: #000;stroke-width: 1.5px;}
+      text { font: 500 15px "Helvetica Neue";}
+    </style>
+</head>
+<body>
+  <script>
+    let width = 960;
+    let height = 500;
+    let radius = height / 2 - 20;
+
+    //生成孤生器
+    let arc = d3.svg.arc()
+                .innerRadius(0)
+                .outerRadius(radius);
+
+    //绘制画布
+    let svg = d3.select('body').append('svg')
+                .attr('width',width)
+                .attr('height',height)
+    //构造数据
+    let dataset = [
+          {startAngle: Math.PI / 4, endAngle: 3 * Math.PI / 4, text: "This is a clockwise arc."},
+          {startAngle: 3 * Math.PI / 4, endAngle: Math.PI / 4, text: "This is a counterclockwise arc."}
+    ]
+
+
+    //包裹节点
+    let group = svg.selectAll('g')
+                   .data(dataset)
+                   .enter()
+                   .append('g')
+                   .attr('transform',function(d,i){ return 'translate('+((i + 0.5) * width / 3)+','+(height / 2)+')'});
+                   
+    
+    //绘帛路径
+    let path = group.append('path')
+                    .attr('d',arc)
+                    .attr('id',function(d,i){ return 'arc-' + i;})
+
+  
+    //绘制文本
+    let text = group.append('text')
+                    .attr('dx',5)
+                    .attr('dy',-5)
+                    .append('textPath')
+                    .attr('xlink:href',function(d,i){ return '#arc-' + i;})
+                    .text(function(d){ return d.text;})
+
+    
+    </script>
+</body>
+</html>

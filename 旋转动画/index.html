@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/d3/3.5.6/d3.js"></script>
+    <style>
+        path {
+            fill: orchid;
+            stroke: red;
+            stroke-linejoin: round;
+        }
+    </style>
+</head>
+<body>
+    <script>
+
+        let width = 960;
+        let height = 500;
+
+        let svg = d3.select('body').append('svg')
+                    .attr('width',width)
+                    .attr('height',height)
+
+                
+        let group = svg.append('g')
+                       .attr('transform','translate('+width/2+','+height/2+')')
+
+        let path = group.append('path')
+                        .attr('d',d3.svg.symbol().type('cross').size(50000))
+                        .call(twizzle,20000)
+                        .call(plonk,2000)
+
+    
+        function twizzle(path,duration){
+            path.transition('twizzle')
+                .duration(duration)
+                .attrTween('transform',function(){ return d3.interpolateString('rotate(0)','rotate(720)')})
+                .transition()
+                .duration(Math.random() * duration)
+                .each('end',function(){ path.call(twizzle,duration)})
+
+
+        }
+        
+     
+    
+        function plonk(path,duration){
+            path.transition('plonk')
+                .duration(duration)
+                .style('stroke-width','5px')
+                .transition()
+                .style('stroke-width','0px')
+                .transition()
+                .duration(Math.random() * duration)
+                .each('end',function(){ path.call(plonk,duration)});
+
+        }
+        
+        </script>
+</body>
+</html>
+
