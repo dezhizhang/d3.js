@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/d3/3.3.3/d3.js"></script>
+    <style>
+        h1 {
+          text-align: center;
+          font-family: "Helvetica Neue";
+          font-size: 96px;
+          line-height: 350px;
+        }  
+    </style>
+</head>
+<body>
+    <h1>1 + 2 + 3 = <span id="result">?</span></h1>
+    <script>
+        Promise.all([
+          "one.csv",
+          "two.csv",
+          "three.csv"
+        ].map(function(url) {
+          return fetch(url).then(function(response) {
+            return response.ok ? response.text() : Promise.reject(response.status);
+          }).then(function(text) {
+            return d3.csvParse(text);
+          });
+        })).then(function(value) {
+          var one = +value[0][0].number,
+              two = +value[1][0].number,
+              three = +value[2][0].number;
+          document.querySelector("#result").textContent = one + two + three;
+        });
+        
+    </script>
+</body>
+</html>
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+
+
