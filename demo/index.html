@@ -9,14 +9,22 @@
 </head>
 <body>
     <script>
-    var data = [1, 1, 2, 3, 5, 8, 13];
+    // var data = [1, 1, 2, 3, 5, 8, 13];
+    let data = [1, 1, 2, 3, 5, 8, 13];
 
-var width = 960,
-    height = 500,
-    outerRadius = height / 2 - 10,
-    innerRadius = outerRadius - 60,
-    cornerRadius = 12,
-    padAngle = .03;
+// var width = 960,
+//     height = 500,
+//     outerRadius = height / 2 - 10,
+//     innerRadius = outerRadius - 60,
+//     cornerRadius = 12,
+//     padAngle = .03;
+   let width = 960;
+   let height = 500;
+   let outerRadius = height / 2 - 10;
+   let innerRadius = outerHeight - 60;
+   let cornerRadius = 12;
+   let padAngle = 0.03;
+   
 
 var pie = d3.layout.pie()
     .padAngle(padAngle);
