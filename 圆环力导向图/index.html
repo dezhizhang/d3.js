@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/d3/3.5.6/d3.js"></script>
+    <style>
+
+        line {
+          stroke: #ccc;
+          stroke-width: 1.5px;
+        }
+        
+        </style>
+</head>
+<body>
+    <script>
+
+        let width = 960;
+        let height = 500;
+
+      
+        let svg = d3.select('body').append('svg')
+                    .attr('width',width)
+                    .attr('height',height);
+
+        
+      
+        let force = d3.layout.force()
+                      .size([width,height]);
+
+
+        d3.json('index.json',(error,graph) => {
+            if(error) throw error;
+            let nodes = d3.values(graph);
+            let links = d3.merge(nodes.map(function(source){
+                return source.map(function(target) {
+                  return {source: source, target: graph[target]};
+                });
+            }))
+
+
+            force
+                .nodes(nodes)
+                .links(links)
+                .start()
+
+
+            //绘制连线
+            let link = svg.selectAll('.link')
+                          .data(links)
+                          .enter()
+                          .append('line')
+
+        
+      
+            //绘制节点
+            let node = svg.selectAll('.node')
+                           .data(nodes)
+                           .enter()
+                           .append('circle')
+                           .attr('r',5)
+                           .call(force.drag)
+
+        
+           force.on('tick',function(){
+                link.attr('x1',function(d){ return d.source.x;})
+                   .attr('y1',function(d){ return d.source.y;})
+                   .attr('x2',function(d){ return d.target.x;})
+                   .attr('y2',function(d){ return d.target.y;})
+
+                node.attr('cx',function(d){ return d.x;})
+                    .attr('cy',function(d){ return d.y;})
+
+
+                
+           })
+
+        })
+
+        
+     
+
+        </script>
+</body>
+</html>
+
+
