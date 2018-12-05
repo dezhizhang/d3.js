@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/d3/3.5.6/d3.js"></script>
+    <style>
+      .node {
+        cursor: pointer;
+        stroke: #3182bd;
+        stroke-width: 1.5px;
+      }
+      
+      .link {
+        fill: none;
+        stroke: #9ecae1;
+        stroke-width: 1.5px;
+      }
+      
+    </style>
+</head>
+<body>
+    
+  <script>
+    let width = 960;   //画布的宽
+    let height = 500;  //画布的高
+    let root = '';
+
+    //力导向布局
+    let  force = d3.layout.force()
+                   .size([width,height])
+                   .on('tick',tick);    
+
+  
+    //绘制画布
+    let svg = d3.select('body').append('svg')
+                   .attr('width',width)
+                   .attr('height',height)     
+
+
+    //选取画布中的所有节点
+    let link = svg.selectAll('.link');
+    let node = svg.selectAll('.node');
+
+
+    //获取json数据
+    d3.json('index.json',(error,json) => {
+      if(error) throw error;
+      root = json;
+      update();
+
+
+    })
+    
+    //更新绘制函数
+    function update() {
+    
+      let nodes = flatten(root);
+      let links = d3.layout.tree().links(nodes);
+     
+     force.nodes(nodes)
+          .links(links)
+          .start()
+
+    
+      //更新连线
+      link = link.data(links,function(d){ return d.target.id;})
+    
+
+      //绘制连线
+      link.enter().insert('line','.node')
+                  .attr('class','link')
+                  .attr('x1',function(d){ return d.source.x;})
+                  .attr('y1',function(d){ return d.source.y;})
+                  .attr('x2',function(d){ return d.target.x;})
+                  .attr('y2',function(d){ return d.target.y;})
+
+                 
+      //退出更新连线
+      link.exit().remove();
+    
+      //更新节点的
+      node = node.data(nodes, function(d){ return d.id;}).style('fill',color)
+  
+      //绘制节点
+      node.enter().append('circle')
+            .attr('class','node')
+            .attr('cx',function(d){ return d.x;})
+            .attr('cy',function(d){ return d.y;})
+            .attr('r',function(d){ return Math.sqrt(d.size) / 10 || 4.5})
+            .style('fill',color)
+            .on('click', click)
+            .call(force.drag);
+ 
+      //移出节点
+      node.exit().remove();
+    }
+    
+    //更新节点和连线
+    function tick() {
+      link.attr("x1", function(d) { return d.source.x; })
+          .attr("y1", function(d) { return d.source.y; })
+          .attr("x2", function(d) { return d.target.x; })
+          .attr("y2", function(d) { return d.target.y; });
+    
+      node.attr("cx", function(d) { return d.x; })
+          .attr("cy", function(d) { return d.y; });
+    }
+
+  
+    //颜色函数
+    function color(d) {
+      return d._children ? "#3182bd" : d.children ? "#c6dbef" : "#fd8d3c";
+    }
+
+    //点击时的处理
+    function click(d) {
+      if (!d3.event.defaultPrevented) {
+        if (d.children) {
+          d._children = d.children;
+          d.children = null;
+        } else {
+          d.children = d._children;
+          d._children = null;
+        }
+        update();
+      }
+    }
+    
+    //对数据进行处理
+    function flatten(root) {
+      let nodes = [];
+      let i=0;
+      function recurse(node) {
+        if(node.children) node.children.forEach(recurse);
+        if(!node.id) node.id = ++i
+        nodes.push(node);
+      }
+      recurse(root)
+      return nodes;
+
+    }
+    
+    </script>
+</body>
+</html>
+

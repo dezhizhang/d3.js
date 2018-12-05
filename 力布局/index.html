@@ -20,9 +20,15 @@
         
         var fill = d3.scale.category10();
         
-        var nodes = d3.range(100).map(function(i) {
-          return {index: i};
-        });
+
+        let nodes = d3.range(100).map(function(i){
+            return {index:1}
+
+        })
+
+
+       
+
         
         var force = d3.layout.force()
             .nodes(nodes)

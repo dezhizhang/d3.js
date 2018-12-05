@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/d3/3.3.3/d3.js"></script>
+    <style>
+
+        .link {
+          stroke: #777;
+          stroke-opacity: 0.2;
+          stroke-width: 1.5px;
+        }
+        
+        </style>
+</head>
+<body>
+    <script>
+        //设置画布的大小
+        let width = 960;
+        let height = 500;
+
+        //绘制画布
+        let svg = d3.select('body').append('svg')
+                    .attr('width',width)
+                    .attr('height',height);
+
+        //设置力导向
+        let force = d3.layout.force()
+                    .gravity(0.05)
+                    .charge(-240)
+                    .linkDistance(60)
+                    .size([width,height])
+
+
+        //加载数据
+        d3.json('index.json',(error,json) => {
+          
+            if(error) throw error;
+
+                force
+                    .nodes(json.nodes)
+                    .links(json.links)
+                    .start()
+
+        //绘制连线
+        let link = svg.selectAll('.link')
+                    .data(json.links)
+                    .enter()
+                    .append('line')
+                    .attr('class','link')
+        //绘制连线
+        let node = svg.selectAll('.node')
+                    .data(json.nodes)
+                    .enter()
+                    .append('g')
+                    .attr('class','node')
+                    .call(force.drag)
+
+        //绘制图片
+        node.append('image')
+                    .attr('class','circle')
+                    .attr('xlink:href','mbostock.jpg')
+                    .attr('x','-10px')
+                    .attr('y','-10px')
+                    .attr('width','20px')
+                    .attr('height','20px')
+
+
+        
+        node.append("title")
+                    .text(function(d) { return d.name; });
+        
+
+
+
+        //更新连线
+        force.on('tick',function() {
+            link.attr("x1", function(d) { return d.source.x; })
+                .attr("y1", function(d) { return d.source.y; })
+                .attr("x2", function(d) { return d.target.x; })
+                .attr("y2", function(d) { return d.target.y; });
+        
+            node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+        })
+
+
+                        
+                    
+
+        })
+
+                
+        </script>
+</body>
+</html>
+
+
