@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/d3/3.5.6/d3.js"></script>
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+        }
+            
+        svg {
+              position: absolute;
+        }
+            
+    </style>
+</head>
+<body>
+    <script>
+     
+     //绘制画布
+     let width = window.innerWidth;
+     let height = window.innerHeight;
+
+    //生成数据
+     let dataset = d3.range(20).map(function(){ return {
+         x:Math.random() * width,
+         y:Math.random() * height
+     }});
+
+     //生成颜色
+     let colors = d3.scale.category10();
+
+     //设置拖拽
+     let drag = d3.behavior.drag()
+                  .origin(function(d){ return { x:d.x,y:d.y}})
+                  .on('dragstart',dragstarted)
+                  .on('drag',dragged)
+                  .on('dragend',dragended)
+
+    let node = d3.select('body')
+                 .on('touchstart', nozoom)
+                 .on('touchmove',nozoom)
+                 .append('svg')
+                 .attr('width',width)
+                 .attr('height',height)
+                 .selectAll('circle')
+                 .data(dataset)
+                 .enter()
+                 .append('circle')
+                 .attr('transform',function(d){ return 'translate('+d.x+','+d.y+')' })
+                 .attr('r','20')
+                 .style('fill',function(d,i){ return colors(i)})
+                .call(drag)
+
+
+
+
+function dragstarted(d) {
+   this.parentNode.appendChild(this);
+   d3.select(this).transition()
+                 .ease("elastic")
+                 .duration(500)
+                 .attr('r',30)
+                 .transition()
+                 .ease("elastic")
+                 .duration(500)
+                 .attr('r',20)
+
+}
+
+function dragged(d) {
+   d.x = d3.event.x;
+   d.y = d3.event.y;
+   d3.select(this)
+     .attr('transform','translate('+d.x+','+d.y+')')
+
+}
+
+function dragended() {
+   d3.select(this)
+     .transition()
+     .ease("elastic")
+     .attr("opacity",'0.2');
+
+     
+}
+
+function nozoom() {
+    d3.event.preventDefault();
+}
+
+    </script>
+</body>
+</html>
+
+
