@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/d3/4.0.0/d3.js"></script>
+</head>
+<body>
+    <canvas width="960" height="500"></canvas>
+    <script>
+
+    //获取canvas
+    let canvas = d3.select('canvas');
+    //设置绘图环境
+    let ctx = canvas.node().getContext('2d');
+    //获取画布宽高
+    let width = canvas.property('width');
+    let height = canvas.property('height');
+    //设置半径
+    let radius = 32;
+
+    //生成随机的圆坐标
+    let circles = d3.range(20).map(function(i){
+        return {
+            index:i,
+            x:Math.round(Math.random() * (width - radius * 2) + radius),
+            y:Math.round(Math.random() * (height - radius * 2) + radius)
+        }
+    })
+
+    //设置颜色序数比例尺
+    let color = d3.scaleOrdinal()
+                  .range(d3.schemeCategory20)
+
+    //给绘制画布添加事件
+    canvas.call(d3.drag()
+          .subject(dragsubject)
+          .on('start',dragstarted)
+          .on('drag',dragged)
+          .on('end',dragended)
+          .on('start.render drag.render end.render', render)
+    )
+
+
+    render();
+
+
+    //绘制圆
+    function render() {
+        ctx.clearRect(0,0,width,height)
+        for(let i=0;n = circles.length, i < n;++i){
+            circle = circles[i];
+            ctx.beginPath();
+            ctx.moveTo(circle.x + radius,circle.y);
+            ctx.arc(circle.x,circle.y,radius,0,2 * Math.PI);
+            ctx.fillStyle = color(circle.index);
+            ctx.fill();
+            if(circle.active){
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+            }
+
+        }
+    }
+
+
+    function dragsubject() {
+      let i = 0;
+      let n = circles.length;
+      let dx = '';
+      let dy = '';
+      let d2 = '';
+      let s2 = radius * radius * 4;
+      let circle = '';
+      let subject = '';
+      for(let i=0;i<n;i++){
+          circle = circles[i];
+          dx = d3.event.x - circle.x;
+          dy = d3.event.y - circle.y;
+          d2 = dx * dx + dy * dy;
+          if (d2 < s2) subject = circle, s2 = d2;
+
+      }
+      return subject;
+
+    }
+
+    function dragstarted() {
+      circles.splice(circle.indexOf(d3.event.subject),1);
+      circles.push(d3.event.subject);
+      d3.event.subject.active= true;
+
+    }
+
+    function dragged() {
+        d3.event.subject.x = d3.event.x;
+        d3.event.subject.y = d3.event.y;
+    }
+
+    function dragended() {
+        d3.event.subject.active = false;
+    }
+
+
+
+
+
+    </script>
+</body>
+</html>
+

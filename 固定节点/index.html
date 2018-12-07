@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+    .node {
+        stroke: #fff;
+        stroke-width: 1.5px;
+    }
+    .link {
+        stroke: #999;
+    }
+    </style>
+    <script src="https://cdn.bootcss.com/d3/3.5.6/d3.js"></script>
+      
+</head>
+<body>
+    <script>
+
+        //画布的宽高
+        let width = 960;
+        let height = 500;
+
+        //绘制画布
+        var svg = d3.select("body").append("svg")
+            .attr("width", width)
+            .attr("height", height)
+                    
+        //加载数据
+        d3.json("index.json", function(error, node) {
+          if (error) throw error;
+
+          //这段代码最重要
+          node.links.forEach(function(d){
+           
+            d.source = node.nodes[d.source];
+            d.target = node.nodes[d.target];
+
+          })
+        
+        //绘制直线
+        let link = svg.append('g')
+                        .attr('class','link')
+                        .selectAll('line')
+                        .data(node.links)
+                        .enter()
+                        .append('line')
+                        .attr('x1',function(d){ return d.source.x;})
+                        .attr('y1',function(d){ return d.source.y;})
+                        .attr('x2',function(d){ return d.target.x;})
+                        .attr('y2',function(d){ return d.target.y;})
+
+        //绘制节点
+        let circleNode = svg.append('g')
+                        .attr('class','node')
+                        .selectAll('circle')
+
+                        .data(node.nodes)
+                        .enter()
+                        .append('circle')
+                        .attr('r','10')
+                        .attr('cx',function(d){ return d.x;})
+                        .attr('cy',function(d){ return d.y;})
+                        .attr('fill','red');
+
+          });
+        
+       
+        </script>
+</body>
+</html>
+
+
