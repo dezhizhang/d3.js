@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/d3/3.5.3/d3.js"></script>
+    <style>
+
+        .link {
+          stroke: #000;
+          stroke-width: 1.5px;
+        }
+        
+        .node {
+          cursor: move;
+          fill: #ccc;
+          stroke: #000;
+          stroke-width: 1.5px;
+        }
+        
+        .node.fixed {
+          fill: #f00;
+        }
+        
+        </style>
+</head>
+<body>
+    <script>
+        let width = 960;
+        let height = 500;
+
+        let svg = d3.select('body')
+                    .append('svg')
+                    .attr('width',width)
+                    .attr('height',height);
+
+
+        let force = d3.layout.force()
+                      .size([width,height])
+                      .charge(-400)
+                      .linkDistance(40)
+                      .on('tick',tick)
+
+
+        let drag = force.drag()
+                      .on('dragstart',dragstart)
+
+        //设为全局便于后面利用
+        let link = svg.selectAll('.link');
+        let node = svg.selectAll('.node');
+
+
+        d3.json('index.json',(error,json) => {
+           if(error) throw error;
+
+            force
+                .nodes(json.nodes)
+                .links(json.links)
+                .start();
+
+            //绘制连线 
+            link = link.data(json.links)
+                .enter()
+                .append("line")
+                .attr("class", "link");
+            
+            //绘制节点
+            node = node.data(json.nodes)
+                .enter()
+                .append("circle")
+                .attr("class", "node")
+                .attr("r", 12)
+                .on("dblclick", dblclick)
+                .call(drag);
+
+
+        })
+
+        //更新节点
+        function tick() {
+            link.attr("x1", function(d) { return d.source.x; })
+                .attr("y1", function(d) { return d.source.y; })
+                .attr("x2", function(d) { return d.target.x; })
+                .attr("y2", function(d) { return d.target.y; });
+
+            node.attr("cx", function(d) { return d.x; })
+                 .attr("cy", function(d) { return d.y; });
+        }
+        
+        //拖拽
+        function dragstart(d) {
+            d3.select(this).classed("fixed", d.fixed = false);
+        }
+        
+        //选中
+        function dblclick(d) {
+            d3.select(this).classed("fixed", d.fixed = true);
+        }
+
+        
+    </script>
+</body>
+</html>
+
+

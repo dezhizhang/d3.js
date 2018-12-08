@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/d3/4.0.0-alpha.2/d3.js"></script>
+    <style>
+    h1 {
+    font: 400 120px/500px "Helvetica Neue";
+    text-align: center;
+    width: 960px;
+    height: 500px;
+    margin: 0;
+    }
+    </style>
+</head>
+<body>
+        <script>
+
+                var format = d3.format(",d");
+                
+                d3.select("h1")
+                  .transition()
+                    .duration(2500)
+                    .on("start", function repeat() {
+                      d3.active(this)
+                          .tween("text", function() {
+                            var that = d3.select(this),
+                                i = d3.interpolateNumber(that.text().replace(/,/g, ""), Math.random() * 1e6);
+                            return function(t) { that.text(format(i(t))); };
+                          })
+                        .transition()
+                          .delay(1500)
+                          .on("start", repeat);
+                    });
+                
+                </script>
+</body>
+</html>
+
+
