@@ -1,0 +1,27 @@
+{
+    "nodes": [
+      {"id": "red"},
+      {"id": "orange"},
+      {"id": "yellow"},
+      {"id": "green"},
+      {"id": "blue"},
+      {"id": "violet"},
+      {"id": "pink"},
+      {"id": "brown"},
+      {"id": "chartreuse"},
+      {"id": "darkmagenta"}
+
+    ],
+    "links": [
+      {"source": "red", "target": "yellow"},
+      {"source": "red", "target": "blue"},
+      {"source": "red", "target": "green"},
+      {"source": "red", "target": "violet"},
+      {"source": "red", "target": "orange"},
+      {"source": "violet","target":"pink"},
+      {"source": "pink","target":"brown"},
+      {"source": "yellow","target":"chartreuse"},
+      {"source": "chartreuse","target":"darkmagenta"}
+    ]
+  }
+  

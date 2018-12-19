@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/d3/3.5.6/d3.js"></script>
+    <style>
+    html,
+    body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    }
+
+    svg {
+    position: absolute;
+    }
+
+    rect {
+    fill: white;
+    }
+  </style>
+</head>
+<body>
+    <script>
+      let width = 960;
+      let height = 500;
+
+      //绘制画布
+      let svg = d3.select('body')
+                  .on("touchstart", nozoom)
+                  .on("touchmove", nozoom)
+                  .append('svg')
+                  .attr('width',width)
+                  .attr('height',height)
+     //生成数据
+     let data = d3.range(20)
+                  .map(function(){ return [Math.random() * width,Math.random() * height]});
+
+     //颜色比例尺
+     let colors = d3.scale.category10()
+     
+     //拖拽
+    let zoom = d3.behavior.zoom()
+                 .on("zoom", zoomed)
+
+    
+
+    var g = svg.append("g")
+        .call(zoom);
+
+    g.append("rect")
+        .attr("width", width)
+        .attr("height", height)
+        .on("click", clicked);
+
+    var view = g.append("g")
+        .attr("class", "view");
+
+    view.selectAll("circle")
+        .data(data)
+    .enter().append("circle")
+        .attr("transform", function(d) { return "translate(" + d + ")"; })
+        .attr("r", 32)
+        .style("fill", function(d, i) { return colors(i); });
+
+    function zoomed() {
+    view.attr("transform", "translate(" + d3.event.translate + ") scale(" + d3.event.scale + ")");
+    }
+
+    function clicked(d, i) {
+    if (d3.event.defaultPrevented) return; // zoomed
+
+    d3.select(this).transition()
+        .style("fill", "black")
+        .transition()
+        .style("fill", "white");
+    }
+
+    function nozoom() {
+    d3.event.preventDefault();
+    }
+
+    
+
+    
+
+
+    
+    </script>
+</body>
+</html>

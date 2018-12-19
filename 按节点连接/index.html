@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/d3/4.2.8/d3.js"></script>
+    <style>
+ .node {
+    stroke: #000;
+    stroke-width: 1.5px;
+  }
+  
+  .link {
+    stroke: #999;
+    stroke-width: 1.5px;
+  }
+    </style>
+
+  
+</head>
+<body>
+    <svg width="960" height="500"></svg>
+    <script>
+
+        var svg = d3.select("svg"),
+            width = +svg.attr("width"),
+            height = +svg.attr("height");
+        
+        var simulation = d3.forceSimulation()
+            .force("charge", d3.forceManyBody().strength(-200))
+            .force("link", d3.forceLink().id(function(d) { return d.id; }).distance(40))
+            .force("x", d3.forceX(width / 2))
+            .force("y", d3.forceY(height / 2))
+            .on("tick", ticked);
+        
+        var link = svg.selectAll(".link"),
+            node = svg.selectAll(".node");
+
+            let colors =['red','yellow','pink','green','orange','#f60']
+        
+        d3.json("graph.json", function(error, graph) {
+          if (error) throw error;
+     
+
+        
+          simulation.nodes(graph.nodes);
+          simulation.force("link").links(graph.links);
+        
+          link = link
+            .data(graph.links)
+            .enter().append("line")
+              .attr("class", "link");
+        
+          node = node
+            .data(graph.nodes)
+            .enter().append("circle")
+              .attr("class", "node")
+              .attr("r", 6)
+              .style("fill", function(d,i) { return d.id });
+              console.log(graph.nodes);
+              
+        });
+        
+        function ticked() {
+          link.attr("x1", function(d) { return d.source.x; })
+              .attr("y1", function(d) { return d.source.y; })
+              .attr("x2", function(d) { return d.target.x; })
+              .attr("y2", function(d) { return d.target.y; });
+        
+          node.attr("cx", function(d) { return d.x; })
+              .attr("cy", function(d) { return d.y; });
+        }
+        
+        </script>
+
+
+</body>
+</html>
+
