@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/d3/3.5.6/d3.js"></script>
+    <style>
+        .chart div {
+            font: 10px sans-serif;
+            background-color: steelblue;
+            text-align: right;
+            padding: 3px;
+            margin: 1px;
+            color: white;
+          }
+    </style>
+   
+</head>
+<body>
+    <div class="chart"></div>
+    <script>
+        
+        //生成数据
+        let data = [4, 8, 15, 16, 23, 42];
+
+        //比例尺
+        let x = d3.scale.linear()
+                   .domain([0,d3.max(data)])
+                   .range([0,420]);
+
+        //绘制图形
+        let svg = d3.select('.chart')
+                    .selectAll('div')
+                    .data(data)
+                    .enter()
+                    .append('div')
+                    .style('width',function(d){ return x(d) +'px'})
+                    .text(function(d){ return d;});
+
+
+    </script>
+</body>
+</html>
